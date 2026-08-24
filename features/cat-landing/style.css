@@ -1605,6 +1605,29 @@ input:focus-visible {
   font-size: 0.8rem;
 }
 
+/* --- Print Styles & Reduced Motion --- */
+@media print {
+  .navbar, .scroll-progress-bar, .paw-container, .back-to-top, .custom-cursor {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .custom-cursor {
+    display: none;
+  }
+}
+
 /* --- Animations --- */
 @keyframes fadeInUp {
   from {
@@ -1706,5 +1729,9 @@ input:focus-visible {
   .breed-card {
     flex-direction: column;
     text-align: center;
+  }
+
+  .custom-cursor {
+    display: none;
   }
 }
