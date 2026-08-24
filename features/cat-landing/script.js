@@ -3,7 +3,8 @@
  * Handles: typing animation, stats counter, carousel, theme toggle,
  *          floating paws, scroll animations, breed filter/search,
  *          accordion tips, interactive quiz, breed favoriting,
- *          confetti effects, scroll progress, back to top, and newsletter form.
+ *          gallery lightbox, history timeline scroll observer, custom cursor,
+ *          confetti effects, scroll progress, back to top, and keyboard shortcuts.
  */
 
 (function () {
@@ -79,7 +80,7 @@
     });
   }
 
-  // ─── Facts Carousel ─────────────────────────────────────
+  // ─── Facts Carousel ───────────────────────────────────��─
   function initCarousel() {
     const track = document.getElementById('factsTrack');
     const cards = document.querySelectorAll('.fact-card');
@@ -191,6 +192,16 @@
     setInterval(spawnPaw, 2500);
   }
 
+  // ─── Custom Pointer Follower ───────────────────────────
+  function initCustomCursor() {
+    const cursor = document.getElementById('customCursor');
+    if (!cursor) return;
+
+    window.addEventListener('mousemove', (e) => {
+      cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    }, { passive: true });
+  }
+
   // ─── Scroll Animations ─────────────────────────────────
   function initScrollAnimations() {
     const breedCards = document.querySelectorAll('.breed-card');
@@ -210,6 +221,71 @@
     );
 
     breedCards.forEach((card) => observer.observe(card));
+  }
+
+  // ─── Timeline Scroll Reveal ────────────────────────────
+  function initTimeline() {
+    const items = document.querySelectorAll('.timeline-item');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry, i) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              entry.target.classList.add('visible');
+            }, i * 150);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    items.forEach((item) => observer.observe(item));
+  }
+
+  // ─── Lightbox Modal Handler ─────────────────────────────
+  function initLightbox() {
+    const modal = document.getElementById('lightboxModal');
+    const closeBtn = document.getElementById('lightboxClose');
+    const emojiEl = document.getElementById('lightboxEmoji');
+    const titleEl = document.getElementById('lightboxTitle');
+    const captionEl = document.getElementById('lightboxCaption');
+    const cards = document.querySelectorAll('.gallery-card');
+
+    if (!modal || !cards.length) return;
+
+    function openModal(card) {
+      const emoji = card.querySelector('.gallery-emoji')?.textContent || '🐱';
+      const title = card.getAttribute('data-title') || 'Cat Photo';
+      const caption = card.getAttribute('data-caption') || '';
+
+      if (emojiEl) emojiEl.textContent = emoji;
+      if (titleEl) titleEl.textContent = title;
+      if (captionEl) captionEl.textContent = caption;
+
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeModal() {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    cards.forEach((card) => {
+      card.addEventListener('click', () => openModal(card));
+    });
+
+    closeBtn?.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) {
+        closeModal();
+      }
+    });
   }
 
   // ─── Breed Search & Filtering ───────────────────────────
@@ -445,6 +521,18 @@
     }
   }
 
+  // ─── Keyboard Shortcuts ─────────────────────────
+  function initKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+      // Prevent handling inside inputs
+      if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
+
+      if (e.key === 'd' || e.key === 'D') {
+        document.getElementById('themeToggle')?.click();
+      }
+    });
+  }
+
   // ─── Scroll Progress & Back to Top ─────────────────────
   function initScrollProgress() {
     const progressBar = document.getElementById('scrollProgressBar');
@@ -522,7 +610,7 @@
     }, { passive: true });
   }
 
-  // ─── Mobile Menu ─────────────���──────────────────────────
+  // ─── Mobile Menu ────────────────────────────────────────
   function initMobileMenu() {
     const btn = document.getElementById('mobileMenuBtn');
     const links = document.querySelector('.nav-links');
@@ -556,8 +644,11 @@
   function init() {
     initThemeToggle();
     initFloatingPaws();
+    initCustomCursor();
     initCarousel();
     initScrollAnimations();
+    initTimeline();
+    initLightbox();
     initBreedFilter();
     initAccordion();
     initFavorites();
@@ -566,6 +657,7 @@
     initNewsletter();
     initNavbar();
     initMobileMenu();
+    initKeyboardShortcuts();
     animateCounters();
     runTypingLoop();
   }
