@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A beautiful landing page dedicated to cats — explore fun facts, adopt, take the matchmaker quiz, and celebrate our feline friends.">
+  <meta name="description" content="A beautiful landing page dedicated to cats — explore fun facts, adopt, take the matchmaker quiz, view galleries, and celebrate our feline friends.">
   <title>Whiskers & Paws — Cat Landing Page</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +13,9 @@
 <body>
   <!-- Reading Progress Bar -->
   <div class="scroll-progress-bar" id="scrollProgressBar" aria-hidden="true"></div>
+
+  <!-- Custom Pointer Follower -->
+  <div class="custom-cursor" id="customCursor" aria-hidden="true">🐾</div>
 
   <!-- Floating paw prints background -->
   <div class="paw-container" id="pawContainer" aria-hidden="true"></div>
@@ -28,7 +31,9 @@
         <li><a href="#hero">Home</a></li>
         <li><a href="#facts">Fun Facts</a></li>
         <li><a href="#breeds">Breeds</a></li>
+        <li><a href="#gallery">Gallery</a></li>
         <li><a href="#care">Care Tips</a></li>
+        <li><a href="#timeline">History</a></li>
         <li><a href="#quiz">Quiz</a></li>
         <li><a href="#adopt">Adopt</a></li>
         <li><a href="#newsletter">Join Us</a></li>
@@ -259,6 +264,88 @@
     </div>
   </section>
 
+  <!-- Cat Photo Gallery Section -->
+  <section class="gallery-section" id="gallery">
+    <div class="gallery-inner">
+      <div class="section-header">
+        <p class="section-tag">Purrfect Snapshots</p>
+        <h2 class="section-title">Feline Photo Gallery</h2>
+      </div>
+      <div class="gallery-grid" id="galleryGrid">
+        <div class="gallery-card" data-category="playful" data-title="Milo in the Sun" data-caption="Soaking up the warm afternoon rays with pure bliss.">
+          <div class="gallery-media">
+            <span class="gallery-emoji">🐱☀️</span>
+            <div class="gallery-overlay"><span class="view-btn">🔍 View Photo</span></div>
+          </div>
+          <div class="gallery-info">
+            <h4>Milo</h4>
+            <p>Sunbeam Lounger</p>
+          </div>
+        </div>
+        <div class="gallery-card" data-category="nap" data-title="Luna's Cozy Corner" data-caption="Mastering the art of 16-hour beauty naps on plush cushions.">
+          <div class="gallery-media">
+            <span class="gallery-emoji">😸💤</span>
+            <div class="gallery-overlay"><span class="view-btn">🔍 View Photo</span></div>
+          </div>
+          <div class="gallery-info">
+            <h4>Luna</h4>
+            <p>Snooze Specialist</p>
+          </div>
+        </div>
+        <div class="gallery-card" data-category="playful" data-title="Oliver's Box Castle" data-caption="If it fits, I sits — the ultimate cardboard kingdom ruler.">
+          <div class="gallery-media">
+            <span class="gallery-emoji">📦😼</span>
+            <div class="gallery-overlay"><span class="view-btn">🔍 View Photo</span></div>
+          </div>
+          <div class="gallery-info">
+            <h4>Oliver</h4>
+            <p>Box Architect</p>
+          </div>
+        </div>
+        <div class="gallery-card" data-category="curious" data-title="Bella's Window Watch" data-caption="Keeping a watchful eye on neighborhood birds and rustling leaves.">
+          <div class="gallery-media">
+            <span class="gallery-emoji">🐈‍⬛🐦</span>
+            <div class="gallery-overlay"><span class="view-btn">🔍 View Photo</span></div>
+          </div>
+          <div class="gallery-info">
+            <h4>Bella</h4>
+            <p>Bird Supervisor</p>
+          </div>
+        </div>
+        <div class="gallery-card" data-category="nap" data-title="Leo's Yarn Adventure" data-caption="Caught in the act of unraveling total playful chaos.">
+          <div class="gallery-media">
+            <span class="gallery-emoji">🧶😹</span>
+            <div class="gallery-overlay"><span class="view-btn">🔍 View Photo</span></div>
+          </div>
+          <div class="gallery-info">
+            <h4>Leo</h4>
+            <p>Tangle Master</p>
+          </div>
+        </div>
+        <div class="gallery-card" data-category="curious" data-title="Nala's Midnight Prowl" data-caption="Exploring secret corners of the house when everyone else is asleep.">
+          <div class="gallery-media">
+            <span class="gallery-emoji">🌙😻</span>
+            <div class="gallery-overlay"><span class="view-btn">🔍 View Photo</span></div>
+          </div>
+          <div class="gallery-info">
+            <h4>Nala</h4>
+            <p>Night Adventurer</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox Modal -->
+  <div class="lightbox" id="lightboxModal" aria-hidden="true" role="dialog" aria-label="Photo Lightbox">
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="lightboxClose" aria-label="Close modal">&times;</button>
+      <div class="lightbox-emoji" id="lightboxEmoji">🐱</div>
+      <h3 class="lightbox-title" id="lightboxTitle">Title</h3>
+      <p class="lightbox-caption" id="lightboxCaption">Caption</p>
+    </div>
+  </div>
+
   <!-- Care Tips Section -->
   <section class="care-section" id="care">
     <div class="care-inner">
@@ -313,6 +400,59 @@
             <div class="accordion-content">
               <p>Annual wellness exams, core vaccinations, and dental care are crucial. Cats are masters at hiding illness, so watch for subtle changes in appetite, litter box habits, or behavior.</p>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feline History Timeline Section -->
+  <section class="timeline-section" id="timeline">
+    <div class="timeline-inner">
+      <div class="section-header">
+        <p class="section-tag">Through the Ages</p>
+        <h2 class="section-title">Timeline of Feline Companionship</h2>
+      </div>
+      <div class="timeline-container">
+        <div class="timeline-line"></div>
+        <div class="timeline-item">
+          <div class="timeline-dot">🏛️</div>
+          <div class="timeline-content">
+            <span class="timeline-year">7500 BCE</span>
+            <h3>Ancient Cyprus</h3>
+            <p>Archaeologists discovered the earliest evidence of human-cat companionship in a grave in Cyprus, predating Egyptian cat worship.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot">👑</div>
+          <div class="timeline-content">
+            <span class="timeline-year">2000 BCE</span>
+            <h3>Egyptian Revere</h3>
+            <p>Cats become revered in Ancient Egypt, protected as sacred creatures associated with goddess Bastet and prized for pest control.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot">⛵</div>
+          <div class="timeline-content">
+            <span class="timeline-year">1500s CE</span>
+            <h3>Seafaring Voyagers</h3>
+            <p>Cats travel the world aboard merchant ships to protect cargo, spreading domestic breeds across Europe, Asia, and the Americas.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot">🏆</div>
+          <div class="timeline-content">
+            <span class="timeline-year">1871 CE</span>
+            <h3>First Major Cat Show</h3>
+            <p>Harrison Weir organizes the world's first major cat show at London's Crystal Palace, popularizing pedigree breeding.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot">🌐</div>
+          <div class="timeline-content">
+            <span class="timeline-year">Present Day</span>
+            <h3>Internet Kings & Queens</h3>
+            <p>Cats conquer global digital culture as viral icons, meme legends, and cherished family members in over 370 million homes.</p>
           </div>
         </div>
       </div>
