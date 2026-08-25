@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A beautiful landing page dedicated to cats — explore fun facts, adopt, take the matchmaker quiz, view galleries, and celebrate our feline friends.">
+  <meta name="description" content="A beautiful landing page dedicated to cats — explore fun facts, adopt, take the matchmaker quiz, view galleries, try our cat name generator & soundboard, and celebrate our feline friends.">
   <title>Whiskers & Paws — Cat Landing Page</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,12 +33,17 @@
         <li><a href="#breeds">Breeds</a></li>
         <li><a href="#gallery">Gallery</a></li>
         <li><a href="#care">Care Tips</a></li>
+        <li><a href="#testimonials">Stories</a></li>
         <li><a href="#timeline">History</a></li>
         <li><a href="#quiz">Quiz</a></li>
+        <li><a href="#name-generator">Fun Tools</a></li>
         <li><a href="#adopt">Adopt</a></li>
         <li><a href="#newsletter">Join Us</a></li>
       </ul>
       <div class="nav-actions">
+        <button class="sound-toggle" id="soundToggle" aria-label="Toggle sound effects">
+          <span class="sound-icon">🔊</span>
+        </button>
         <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
           <span class="toggle-icon">🌙</span>
         </button>
@@ -114,6 +119,22 @@
       </div>
     </div>
   </section>
+
+  <!-- Infinite Marquee Scroller -->
+  <div class="marquee-banner" aria-hidden="true">
+    <div class="marquee-track">
+      <span>🐾 Over 10,000 Cats Adopted</span>
+      <span>✨ 100% Purr Guarantee</span>
+      <span>🐱 Daily Wellness Tips</span>
+      <span>💖 Adopt, Don't Shop</span>
+      <span>😻 Web Audio Purr Generator</span>
+      <span>🐾 Over 10,000 Cats Adopted</span>
+      <span>✨ 100% Purr Guarantee</span>
+      <span>🐱 Daily Wellness Tips</span>
+      <span>💖 Adopt, Don't Shop</span>
+      <span>😻 Web Audio Purr Generator</span>
+    </div>
+  </div>
 
   <!-- Fun Facts Section -->
   <section class="facts-section" id="facts">
@@ -406,6 +427,51 @@
     </div>
   </section>
 
+  <!-- Testimonials / Happy Tails Section -->
+  <section class="testimonials-section" id="testimonials">
+    <div class="testimonials-inner">
+      <div class="section-header">
+        <p class="section-tag">Heartwarming Stories</p>
+        <h2 class="section-title">Happy Tails & Testimonials</h2>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+          <p class="testimonial-text">"Adopting Barnaby through Whiskers & Paws was the best decision of my life. He's my work-from-home buddy and keeps my lap warm all day long!"</p>
+          <div class="testimonial-author">
+            <span class="author-avatar">👩‍💻</span>
+            <div>
+              <h4 class="author-name">Sarah Jenkins</h4>
+              <p class="author-role">Adopted Barnaby (Persian)</p>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+          <p class="testimonial-text">"The breed matchmaker quiz predicted I'd love a Bengal cat, and it was 100% spot on! Cleo is adventurous, smart, and constantly makes me laugh."</p>
+          <div class="testimonial-author">
+            <span class="author-avatar">🚴‍♂️</span>
+            <div>
+              <h4 class="author-name">Marcus Chen</h4>
+              <p class="author-role">Adopted Cleo (Bengal)</p>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+          <p class="testimonial-text">"The care tips and daily advice helped me transition my rescue cat into her new home with zero stress. Truly a purrfect resource for cat lovers."</p>
+          <div class="testimonial-author">
+            <span class="author-avatar">🎨</span>
+            <div>
+              <h4 class="author-name">Elena Rostova</h4>
+              <p class="author-role">Adopted Whiskers (Maine Coon)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Feline History Timeline Section -->
   <section class="timeline-section" id="timeline">
     <div class="timeline-inner">
@@ -472,6 +538,72 @@
         </div>
         <div class="quiz-body" id="quizBody">
           <!-- Dynamically populated by script.js -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cat Name Generator & Soundboard Section -->
+  <section class="generator-section" id="name-generator">
+    <div class="generator-inner">
+      <div class="section-header">
+        <p class="section-tag">Interactive Fun</p>
+        <h2 class="section-title">Cat Name Generator & Soundboard</h2>
+      </div>
+      <div class="generator-grid">
+        <!-- Name Generator Widget -->
+        <div class="generator-card">
+          <div class="widget-header">
+            <span class="widget-icon">🏷️</span>
+            <h3>Find the Perfect Cat Name</h3>
+          </div>
+          <p class="widget-desc">Select a vibe and click generate to get cute, majestic, or quirky name ideas for your feline friend!</p>
+          <div class="name-controls">
+            <select id="nameVibeSelect" class="vibe-select" aria-label="Select name vibe">
+              <option value="cute">Cute & Playful</option>
+              <option value="majestic">Majestic & Royal</option>
+              <option value="food">Food & Tasty</option>
+              <option value="mythical">Mythical & Cosmic</option>
+            </select>
+            <button class="btn btn-primary" id="generateNameBtn">
+              <span>Generate Name</span>
+              <span class="btn-icon">🎲</span>
+            </button>
+          </div>
+          <div class="name-result-box" id="nameResultBox">
+            <span class="result-name" id="resultName">Click generate!</span>
+            <button class="copy-name-btn" id="copyNameBtn" aria-label="Copy name" title="Copy to clipboard">📋</button>
+          </div>
+        </div>
+
+        <!-- Purr Soundboard Widget -->
+        <div class="soundboard-card">
+          <div class="widget-header">
+            <span class="widget-icon">🔊</span>
+            <h3>Interactive Meow Soundboard</h3>
+          </div>
+          <p class="widget-desc">Synthesized Web Audio cat sounds! Click the pads below to hear purrs, meows, and chirps.</p>
+          <div class="soundboard-grid">
+            <button class="sound-pad" data-sound="purr">
+              <span class="pad-icon">😸</span>
+              <span class="pad-label">Deep Purr</span>
+            </button>
+            <button class="sound-pad" data-sound="meow">
+              <span class="pad-icon">🐱</span>
+              <span class="pad-label">Soft Meow</span>
+            </button>
+            <button class="sound-pad" data-sound="chirp">
+              <span class="pad-icon">😻</span>
+              <span class="pad-label">Happy Chirp</span>
+            </button>
+            <button class="sound-pad" data-sound="trill">
+              <span class="pad-icon">😼</span>
+              <span class="pad-label">Playful Trill</span>
+            </button>
+          </div>
+          <div class="sound-visualizer" id="soundVisualizer">
+            <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
+          </div>
         </div>
       </div>
     </div>
