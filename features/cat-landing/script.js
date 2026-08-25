@@ -4,6 +4,7 @@
  *          floating paws, scroll animations, breed filter/search,
  *          accordion tips, interactive quiz, breed favoriting,
  *          gallery lightbox, history timeline scroll observer, custom cursor,
+ *          Web Audio cat sound synthesizer, cat name generator, sound toggle,
  *          confetti effects, scroll progress, back to top, and keyboard shortcuts.
  */
 
@@ -80,7 +81,7 @@
     });
   }
 
-  // ─── Facts Carousel ───────────────────────────────────��─
+  // ─── Facts Carousel ─────────────────────────────────────
   function initCarousel() {
     const track = document.getElementById('factsTrack');
     const cards = document.querySelectorAll('.fact-card');
@@ -136,7 +137,152 @@
     resetAutoPlay();
   }
 
-  // ─── Theme Toggle ──────────────────────────────────────
+  // ─── Web Audio API Sound Synthesizer ─────────────────────
+  let audioCtx = null;
+  let isSoundMuted = false;
+
+  function getAudioContext() {
+    if (!audioCtx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) {
+        audioCtx = new AudioContext();
+      }
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    return audioCtx;
+  }
+
+  function playCatSound(type) {
+    if (isSoundMuted) return;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    animateVisualizer();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    if (type === 'meow') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(420, now);
+      osc.frequency.exponentialRampToValueAtTime(750, now + 0.15);
+      osc.frequency.exponentialRampToValueAtTime(320, now + 0.4);
+      gain.gain.setValueAtTime(0.01, now);
+      gain.gain.linearRampToValueAtTime(0.2, now + 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+      osc.start(now);
+      osc.stop(now + 0.45);
+    } else if (type === 'purr') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(30, now);
+      gain.gain.setValueAtTime(0.01, now);
+      gain.gain.linearRampToValueAtTime(0.18, now + 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.75);
+      osc.start(now);
+      osc.stop(now + 0.75);
+    } else if (type === 'chirp') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(650, now);
+      osc.frequency.exponentialRampToValueAtTime(1150, now + 0.08);
+      osc.frequency.exponentialRampToValueAtTime(850, now + 0.2);
+      gain.gain.setValueAtTime(0.01, now);
+      gain.gain.linearRampToValueAtTime(0.22, now + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      osc.start(now);
+      osc.stop(now + 0.22);
+    } else if (type === 'trill') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(520, now);
+      osc.frequency.linearRampToValueAtTime(820, now + 0.1);
+      osc.frequency.linearRampToValueAtTime(680, now + 0.2);
+      osc.frequency.linearRampToValueAtTime(920, now + 0.35);
+      gain.gain.setValueAtTime(0.01, now);
+      gain.gain.linearRampToValueAtTime(0.18, now + 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+      osc.start(now);
+      osc.stop(now + 0.38);
+    }
+  }
+
+  function animateVisualizer() {
+    const viz = document.getElementById('soundVisualizer');
+    if (!viz) return;
+    viz.classList.add('playing');
+    setTimeout(() => viz.classList.remove('playing'), 800);
+  }
+
+  function initSoundboard() {
+    const pads = document.querySelectorAll('.sound-pad');
+    const soundToggle = document.getElementById('soundToggle');
+
+    pads.forEach((pad) => {
+      pad.addEventListener('click', () => {
+        const soundType = pad.getAttribute('data-sound');
+        playCatSound(soundType);
+      });
+    });
+
+    soundToggle?.addEventListener('click', () => {
+      isSoundMuted = !isSoundMuted;
+      soundToggle.classList.toggle('muted', isSoundMuted);
+      const icon = soundToggle.querySelector('.sound-icon');
+      if (icon) {
+        icon.textContent = isSoundMuted ? '🔇' : '🔊';
+      }
+    });
+  }
+
+  // ─── Cat Name Generator ──────────────────────────────────
+  function initNameGenerator() {
+    const vibeSelect = document.getElementById('nameVibeSelect');
+    const generateBtn = document.getElementById('generateNameBtn');
+    const resultName = document.getElementById('resultName');
+    const copyBtn = document.getElementById('copyNameBtn');
+
+    if (!generateBtn || !resultName) return;
+
+    const nameDatabase = {
+      cute: ['Mochi', 'Peanut', 'Bubbles', 'Ziggy', 'Pippin', 'Button', 'Clover', 'Toffee'],
+      majestic: ['Cleopatra', 'Lord Whiskers', 'Duchess', 'Apollo', 'Zeus', 'Aurelius', 'Serafina', 'Gatsby'],
+      food: ['Cannoli', 'Noodle', 'Waffles', 'Saffron', 'Biscuit', 'Pickle', 'Miso', 'Matcha'],
+      mythical: ['Nebula', 'Phoenix', 'Cosmo', 'Merlin', 'Loki', 'Freya', 'Orion', 'Astral']
+    };
+
+    function generateName() {
+      const vibe = vibeSelect?.value || 'cute';
+      const list = nameDatabase[vibe] || nameDatabase.cute;
+      const randomName = list[Math.floor(Math.random() * list.length)];
+
+      resultName.style.transform = 'scale(0.8)';
+      resultName.style.opacity = '0';
+      setTimeout(() => {
+        resultName.textContent = randomName;
+        resultName.style.transform = 'scale(1)';
+        resultName.style.opacity = '1';
+        resultName.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }, 150);
+
+      playCatSound('chirp');
+    }
+
+    generateBtn.addEventListener('click', generateName);
+
+    copyBtn?.addEventListener('click', () => {
+      const text = resultName.textContent;
+      if (text && text !== 'Click generate!') {
+        navigator.clipboard.writeText(text).then(() => {
+          copyBtn.textContent = '✅';
+          setTimeout(() => { copyBtn.textContent = '📋'; }, 2000);
+        });
+      }
+    });
+  }
+
+  // ─── Theme Toggle ───────────��──────────────────────────
   function initThemeToggle() {
     const toggle = document.getElementById('themeToggle');
     const icon = toggle?.querySelector('.toggle-icon');
@@ -265,6 +411,7 @@
 
       modal.classList.add('active');
       modal.setAttribute('aria-hidden', 'false');
+      playCatSound('meow');
     }
 
     function closeModal() {
@@ -384,6 +531,7 @@
           currentFavs.push(breedId);
           btn.classList.add('active');
           btn.textContent = '❤️';
+          playCatSound('chirp');
         }
         localStorage.setItem('cat-favorites', JSON.stringify(currentFavs));
       });
@@ -458,6 +606,7 @@
           const selectedBreed = q.options[idx].breed;
           scores[selectedBreed] = (scores[selectedBreed] || 0) + 1;
           currentStep++;
+          playCatSound('chirp');
 
           if (currentStep < questions.length) {
             renderQuestion();
@@ -494,6 +643,7 @@
       `;
 
       triggerConfetti();
+      playCatSound('meow');
 
       document.getElementById('quizRestart')?.addEventListener('click', () => {
         currentStep = 0;
@@ -525,10 +675,16 @@
   function initKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
       // Prevent handling inside inputs
-      if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
 
       if (e.key === 'd' || e.key === 'D') {
         document.getElementById('themeToggle')?.click();
+      }
+      if (e.key === 'm' || e.key === 'M') {
+        document.getElementById('soundToggle')?.click();
+      }
+      if (e.key === 'g' || e.key === 'G') {
+        document.getElementById('generateNameBtn')?.click();
       }
     });
   }
@@ -586,6 +742,7 @@
           btn.disabled = true;
           btn.innerHTML = '<span>Subscribed!</span> <span class="btn-icon">🎉</span>';
           triggerConfetti();
+          playCatSound('trill');
           setTimeout(() => {
             btn.disabled = false;
             btn.innerHTML = '<span>Subscribe</span> <span class="btn-icon">✨</span>';
@@ -597,6 +754,7 @@
 
     adoptBtn?.addEventListener('click', () => {
       triggerConfetti();
+      playCatSound('meow');
     });
   }
 
@@ -653,6 +811,8 @@
     initAccordion();
     initFavorites();
     initQuiz();
+    initSoundboard();
+    initNameGenerator();
     initScrollProgress();
     initNewsletter();
     initNavbar();
