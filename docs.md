@@ -36,8 +36,10 @@ The auto-commit script uses a **whitelist-only** approach for maximum safety:
 3. **Empty Content Check**: Changes with empty or whitespace-only content are skipped.
 4. **Any other file path is rejected** — the script will never touch `auto-commit.js`, `.github/`, `README.md`, `docs.md`, or anything in `utils/`.
 
-### API Configuration
-- We use the `v1beta` endpoint with `gemini-3.6-flash` (`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent`) because older model versions (such as `1.5-flash` or `2.5-flash`) are no longer available or supported for newer API keys.
+### API & Reliability Architecture
+- **Multi-Model Candidate Chain**: The script queries `v1beta` models using a fallback order (`gemini-2.5-flash`, `gemini-1.5-flash`, `gemini-2.0-flash`). If any model endpoint is unavailable, rate-limited, or deprecated, the script automatically retries with the next candidate without crashing.
+- **Robust JSON Extraction**: Automatically strips markdown code blocks (```json ... ```) and extracts raw JSON objects from response text.
+- **Porcelain Commit Guard**: Validates that staged changes exist in `git status --porcelain` before executing `git commit`.
 
 ## Auto-Generated Improvement Categories
 

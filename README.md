@@ -64,4 +64,5 @@ The auto-committer includes multiple layers of safety validation:
 ## Troubleshooting / Recent Updates
 - **Iterative Page Evolution**: The auto-committer now iteratively improves a single cat landing page rather than creating scattered files. Each day's commits build on the previous day's work.
 - **Schedule Update**: Changed from 9:00 PM IST to 11:15 PM IST for better end-of-day coverage.
-- **Gemini API Endpoint Fix**: Switched to `gemini-3.6-flash` and the `v1beta` endpoint, as older models (like `gemini-1.5-flash` and `gemini-2.5-flash`) are no longer available or supported for new API keys.
+- **Multi-Model Reliability**: Uses a multi-model candidate fallback chain (`gemini-2.5-flash` → `gemini-1.5-flash` → `gemini-2.0-flash`) via the `v1beta` endpoint to ensure reliable execution without API failure crashes.
+- **Robust JSON & Git Guard**: Strips markdown formatting before parsing and verifies staged porcelain changes prior to executing commits.
