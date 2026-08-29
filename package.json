@@ -1,0 +1,19 @@
+{
+  "name": "helper-hub",
+  "version": "1.0.0",
+  "description": "An intelligent, cloud-based auto-committer for Whiskers & Paws cat landing page",
+  "main": "auto-commit.js",
+  "scripts": {
+    "start": "node auto-commit.js",
+    "auto-commit": "node auto-commit.js",
+    "serve": "npx serve features/cat-landing",
+    "test": "node utils/run-tests.js"
+  },
+  "keywords": [
+    "auto-commit",
+    "gemini-api",
+    "github-actions"
+  ],
+  "author": "Tajamul Wani",
+  "license": "ISC"
+}
