@@ -1,0 +1,22 @@
+# Auto-detect text files and normalize line endings to LF across Windows and WSL Linux
+* text=auto eol=lf
+
+# Explicit LF line endings for codebase files
+*.js text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.sh text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary

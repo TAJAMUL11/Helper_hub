@@ -40,6 +40,7 @@ The auto-commit script uses a **whitelist-only** approach for maximum safety:
 - **Multi-Model Candidate Chain**: The script queries `v1beta` models using a fallback order (`gemini-2.5-flash`, `gemini-1.5-flash`, `gemini-2.0-flash`). If any model endpoint is unavailable, rate-limited, or deprecated, the script automatically retries with the next candidate without crashing.
 - **Robust JSON Extraction**: Automatically strips markdown code blocks (```json ... ```) and extracts raw JSON objects from response text.
 - **Porcelain Commit Guard**: Validates that staged changes exist in `git status --porcelain` before executing `git commit`.
+- **Cross-Platform Line Endings (`.gitattributes`)**: Enforces `eol=lf` across all text files (`*.js`, `*.json`, `*.html`, `*.css`, `*.md`, `*.yml`) to prevent false diffs when toggling between Windows and WSL Linux terminals.
 
 ## Auto-Generated Improvement Categories
 
