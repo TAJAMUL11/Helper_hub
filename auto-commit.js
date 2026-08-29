@@ -96,61 +96,93 @@ function checkGitHubActivity(username) {
 }
 
 function callGemini(prompt) {
-  return new Promise((resolve, reject) => {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      return reject(new Error('GEMINI_API_KEY environment variable is not set.'));
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return Promise.reject(new Error('GEMINI_API_KEY environment variable is not set.'));
+  }
+
+  const candidateModels = [
+    'gemini-2.5-flash',
+    'gemini-1.5-flash',
+    'gemini-2.0-flash'
+  ];
+
+  return (async () => {
+    let lastError = null;
+    for (const model of candidateModels) {
+      try {
+        console.log(`Querying Gemini API using model: ${model}...`);
+        const text = await new Promise((resolve, reject) => {
+          const postData = JSON.stringify({
+            contents: [{
+              parts: [{ text: prompt }]
+            }],
+            generationConfig: {
+              responseMimeType: "application/json"
+            }
+          });
+
+          const options = {
+            hostname: 'generativelanguage.googleapis.com',
+            port: 443,
+            path: `/v1beta/models/${model}:generateContent?key=${apiKey}`,
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Content-Length': Buffer.byteLength(postData)
+            }
+          };
+
+          const req = https.request(options, (res) => {
+            let data = '';
+            res.on('data', (chunk) => { data += chunk; });
+            res.on('end', () => {
+              try {
+                if (res.statusCode !== 200) {
+                  return reject(new Error(`Gemini API Error for model ${model} (status ${res.statusCode}): ${data}`));
+                }
+                const json = JSON.parse(data);
+                if (
+                  json.candidates &&
+                  json.candidates[0] &&
+                  json.candidates[0].content &&
+                  json.candidates[0].content.parts[0]
+                ) {
+                  resolve(json.candidates[0].content.parts[0].text);
+                } else {
+                  reject(new Error(`Unexpected API response structure for model ${model}: ${data}`));
+                }
+              } catch (e) {
+                reject(e);
+              }
+            });
+          });
+
+          req.on('error', (e) => { reject(e); });
+          req.write(postData);
+          req.end();
+        });
+        return text;
+      } catch (err) {
+        console.warn(`Model ${model} failed: ${err.message}. Retrying with next model...`);
+        lastError = err;
+      }
     }
+    throw new Error(`All candidate Gemini models failed. Last error: ${lastError ? lastError.message : 'Unknown'}`);
+  })();
+}
 
-    const postData = JSON.stringify({
-      contents: [{
-        parts: [{ text: prompt }]
-      }],
-      generationConfig: {
-        responseMimeType: "application/json"
-      }
-    });
+function parseGeminiJson(responseText) {
+  let cleaned = responseText.trim();
+  cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
 
-    const options = {
-      hostname: 'generativelanguage.googleapis.com',
-      port: 443,
-      path: `/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(postData)
-      }
-    };
+  const firstBrace = cleaned.indexOf('{');
+  const lastBrace = cleaned.lastIndexOf('}');
+  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+    cleaned = cleaned.substring(firstBrace, lastBrace + 1);
+  }
 
-    const req = https.request(options, (res) => {
-      let data = '';
-      res.on('data', (chunk) => { data += chunk; });
-      res.on('end', () => {
-        try {
-          if (res.statusCode !== 200) {
-            return reject(new Error(`Gemini API Error (status ${res.statusCode}): ${data}`));
-          }
-          const json = JSON.parse(data);
-          if (
-            json.candidates &&
-            json.candidates[0] &&
-            json.candidates[0].content &&
-            json.candidates[0].content.parts[0]
-          ) {
-            resolve(json.candidates[0].content.parts[0].text);
-          } else {
-            reject(new Error('Unexpected API response structure: ' + data));
-          }
-        } catch (e) {
-          reject(e);
-        }
-      });
-    });
-
-    req.on('error', (e) => { reject(e); });
-    req.write(postData);
-    req.end();
-  });
+  return JSON.parse(cleaned);
 }
 
 async function run() {
@@ -204,12 +236,24 @@ async function run() {
     console.warn(`Failed to fetch GitHub activity: ${error.message}. Falling back to local git history check.`);
     let commitDates = [];
     try {
-      // Only count commits authored by the user, not by bots
-      const output = execSync(`git log --pretty=format:"%aI|%an" --author="${username}"`, { encoding: 'utf-8' });
+      const gitUserName = (() => {
+        try { return execSync('git config user.name', { encoding: 'utf-8' }).trim().toLowerCase(); } catch (e) { return ''; }
+      })();
+      const output = execSync('git log --pretty=format:"%aI|%an"', { encoding: 'utf-8' });
       commitDates = output.split('\n').filter(Boolean).map(line => {
-        const [dateStr] = line.trim().split('|');
-        return new Date(dateStr);
-      });
+        const [dateStr, authorName] = line.trim().split('|');
+        const lowerAuthor = (authorName || '').toLowerCase();
+        // Ignore bot commits
+        if (lowerAuthor.includes('github-actions')) return null;
+        if (
+          !username ||
+          lowerAuthor.includes(username.toLowerCase()) ||
+          (gitUserName && lowerAuthor.includes(gitUserName))
+        ) {
+          return new Date(dateStr);
+        }
+        return null;
+      }).filter(Boolean);
     } catch (e) {
       console.log('No local git history found.');
     }
@@ -294,7 +338,7 @@ Ensure:
 
   try {
     const responseText = await callGemini(prompt);
-    const result = JSON.parse(responseText);
+    const result = parseGeminiJson(responseText);
 
     if (!result.changes || !Array.isArray(result.changes) || result.changes.length === 0) {
       throw new Error('Gemini returned empty or invalid changes structure.');
@@ -338,9 +382,14 @@ Ensure:
       // Stage change
       execSync(`git add "${change.filePath}"`);
 
-      // Commit change
-      execSync(`git commit -m "${change.commitMessage}"`);
-      console.log(`- Created commit: "${change.commitMessage}"`);
+      // Check if git status has staged modifications before committing
+      const statusOutput = execSync('git status --porcelain', { encoding: 'utf-8' }).trim();
+      if (statusOutput) {
+        execSync(`git commit -m "${change.commitMessage}"`);
+        console.log(`- Created commit: "${change.commitMessage}"`);
+      } else {
+        console.log(`- Skipped commit for "${change.filePath}": No changes detected.`);
+      }
     }
 
     console.log('Successfully applied all changes locally.');
@@ -351,3 +400,4 @@ Ensure:
 }
 
 run();
+
