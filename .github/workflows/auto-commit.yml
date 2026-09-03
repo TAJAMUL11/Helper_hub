@@ -1,9 +1,7 @@
 name: Daily Helper-Hub Auto-Committer
 
-on:
-  schedule:
-    - cron: '45 17 * * *' # Runs daily at 17:45 UTC (11:15 PM IST)
-  workflow_dispatch:      # Allows manual trigger from GitHub UI
+# Disabled workflow - schedule removed to prevent commits to profile
+on: [] # Disabled trigger - workflow will not execute on schedule or dispatch
 
 permissions:
   contents: write
@@ -38,10 +36,3 @@ jobs:
         run: |
           # Only push if there are local commits that aren't on remote
           git push origin main || echo "No changes to push or push failed"
-
-      - name: Notify on Failure
-        if: failure()
-        run: |
-          gh issue create --title "⚠️ Auto-Committer Workflow Failed" --body "Hey @${{ github.actor }}, the daily auto-commit workflow failed to run or push commits today. Please check the Action logs: https://github.com/${{ github.repository }}/actions"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,10 +1,19 @@
-# Helper-Hub Tool
+# Helper-Hub Tool (DISABLED)
 
-An intelligent, cloud-based auto-committer that automatically keeps your GitHub contributions green and active. 
+> **STATUS: DISABLED / STOPPED** — The auto-committer service has been disabled to prevent automated commits from being pushed to GitHub profiles.
 
-If no commits have been pushed by **11:15 PM IST (17:45 UTC)** on a given day, this tool wakes up, calls the Gemini API to generate 4-5 meaningful improvements to an evolving **"Whiskers & Paws" cat landing page** — adding new sections, visual enhancements, animations, interactive features, and responsive polish — and commits/pushes them automatically.
+An intelligent, cloud-based auto-committer framework that was previously configured to keep GitHub contributions green and active. 
 
-## How It Works
+## Status & Configuration
+
+- **Auto-Committer Status**: `DISABLED` (`AUTO_COMMIT_ENABLED = false` in `auto-commit.js`).
+- **GitHub Actions Workflow Schedule**: Disabled (`on: []` in `.github/workflows/auto-commit.yml`).
+- **Failure Email Notifications**: Removed ("Notify on Failure" step deleted to prevent failure alert emails).
+- **Gemini API Key**: Deleted/revoked to ensure complete deactivation.
+- **Line Ending Normalization**: Renormalized to LF (`text eol=lf`) to eliminate CRLF/LF warnings in Git & WSL Linux terminals.
+- Project is 100% dormant — no scheduled runs, zero failure notifications, and zero auto-commits.
+
+## How It Worked (When Active)
 
 1. **Scheduled Run**: A GitHub Actions workflow runs every day at 17:45 UTC (11:15 PM IST).
 2. **Commit Check**: The tool queries the repository's commit history for the current day in the `Asia/Kolkata` timezone.

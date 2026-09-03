@@ -185,7 +185,14 @@ function parseGeminiJson(responseText) {
   return JSON.parse(cleaned);
 }
 
+const AUTO_COMMIT_ENABLED = false;
+
 async function run() {
+  if (!AUTO_COMMIT_ENABLED) {
+    console.log('[Helper-Hub] Auto-committer is currently DISABLED. No commits will be generated or added to your GitHub profile.');
+    return;
+  }
+
   const todayStr = getKolkataDateString(new Date());
   console.log(`Checking commits for Kolkata Date: ${todayStr}`);
 

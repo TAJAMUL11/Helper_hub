@@ -1,6 +1,16 @@
 # Helper-Hub Developer Documentation
 
+> **SERVICE STATUS: STOPPED / DISABLED**
+> Auto-committing functionality has been deactivated (`AUTO_COMMIT_ENABLED = false` in `auto-commit.js` and `on: []` in `.github/workflows/auto-commit.yml`) to prevent automatic commits to GitHub profiles.
+
 This document explains the technical architecture, design decisions, and local verification steps for the Auto-Committer tool.
+
+## Service Deactivation Overview
+- **Local Guard**: `auto-commit.js` enforces `AUTO_COMMIT_ENABLED = false` and exits cleanly without running git actions or API calls.
+- **Workflow Guard**: `.github/workflows/auto-commit.yml` has its schedule trigger removed (`on: []`) to prevent GitHub Actions runner execution.
+- **Failure Notification Suppression**: Removed the `Notify on Failure` issue/email creation step from the workflow so no failure emails or GitHub issues are ever dispatched.
+- **API Key Revocation**: `GEMINI_API_KEY` has been deleted to prevent any unauthorized/unintended model queries.
+- **Line Ending Normalization**: All codebase text files normalized to `LF` via `.gitattributes` to prevent `CRLF will be replaced by LF` warnings in WSL Linux and Windows environments.
 
 ## Key Design Considerations
 
